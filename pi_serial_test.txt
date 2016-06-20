@@ -1,0 +1,16 @@
+rule "ArduinoUno"
+	when
+		Item Arduino received update
+	then
+		var String ArduinoUpdate = Arduino.state.toString.trim
+		
+		var int lightStartsOn = ArduinoUpdate.indexOf("light:") + "light:".length
+		var String light = ArduinoUpdate.mid(lightStartsOn, ArduinoUpdate.indexOf(';')-lightStartsOn)
+		
+		Arduino_light.postUpdate(light)
+		
+end
+
+// items
+String Arduino "Arduino [%s]" (arduino) {serial="/dev/ttyACM0"}
+String Arduino_light "Light [%s]" 
