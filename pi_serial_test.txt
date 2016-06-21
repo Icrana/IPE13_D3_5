@@ -1,16 +1,54 @@
-rule "ArduinoUno"
+// Code for Pi
+
+// file serial.items
+String Arduino "Arduino [%s]" (arduino) {serial="/dev/ttyACM0"}
+String Arduino_weight "Weight [%s]"
+String Arduino_temperature "Temperature [%s]"
+String Arduino_light "Light [%s]"
+
+// file default.sitemap
+sitemap default label="Serial"
+{
+	Frame label="Arduino"{
+		Text item=Arduino 
+		Text item=Arduino_weight 
+		Text item=Arduino_temperature
+		Text item=Arduino_light
+	}
+}
+
+// file serial.rules
+rule "Arduino"
 	when
 		Item Arduino received update
 	then
 		var String ArduinoUpdate = Arduino.state.toString.trim
 		
+		// weight
+		var int weightStartsOn = ArduinoUpdate.indexOf("weight:") + "weight:".length
+		var String weight = ArduinoUpdate.mid(weightStartsOn, ArduinoUpdate.indexOf('_')-weightStartsOn)
+		
+		Arduino_weight.postUpdate(weight)	
+		
+		// temperature
+		var int temperatureStartsOn = ArduinoUpdate.indexOf("temperature:") + "temperature:".length
+		var String temperature = ArduinoUpdate.mid(temperatureStartsOn, ArduinoUpdate.indexOf('_')-temperatureStartsOn)
+		
+		Arduino_temperature.postUpdate(temperature)
+		
+		// light
 		var int lightStartsOn = ArduinoUpdate.indexOf("light:") + "light:".length
 		var String light = ArduinoUpdate.mid(lightStartsOn, ArduinoUpdate.indexOf(';')-lightStartsOn)
 		
 		Arduino_light.postUpdate(light)
-		
 end
 
-// items
-String Arduino "Arduino [%s]" (arduino) {serial="/dev/ttyACM0"}
-String Arduino_light "Light [%s]" 
+
+
+// changes in these files: /etc/init.d/openhab and /usr/share/openhab/bin/openhab.sh
+// write into
+-Dgnu.io.rxtx.SerialPorts=/dev/ttyACM0
+
+// log datei
+/var/log/openhab/events.log
+
