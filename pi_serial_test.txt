@@ -7,13 +7,19 @@ String Arduino_temperature "Temperature [%s]"
 String Arduino_light "Light [%s]"
 
 // file default.sitemap
-sitemap default label="Serial"
-{
+sitemap default label="Home Automation Group 5"{
 	Frame label="Arduino"{
 		Text item=Arduino 
 		Text item=Arduino_weight 
 		Text item=Arduino_temperature
 		Text item=Arduino_light
+	}
+	Frame label="Genuino"{
+		Text item=Genuino 
+		Text item=Genuino_knock
+		Text item=Genuino_temperature
+		Text item=Genuino_lightbar
+		Text item=Genuino_button
 	}
 }
 
@@ -42,6 +48,18 @@ rule "Arduino"
 		
 		Arduino_light.postUpdate(light)
 end
+
+var String THINGSPEAK_URL="https://api.thingspeak.com/update?api_key=PAEA6JS2MXUR0U8D&field1=0"
+//------------------------------------------------------------------------
+//    Sendet Temperatur an ThingSpeak
+//------------------------------------------------------------------------
+rule "SendLightToThingSpeak"
+        when
+                Item Arduino_light received update
+        then
+                sendHttpGetRequest(THINGSPEAK_URL + "&field1=" + Arduino_light )
+end
+
 
 
 

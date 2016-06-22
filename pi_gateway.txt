@@ -1,26 +1,33 @@
 // Code for Pi
 
-// file serial.items
-String Genuino "Genuino [%s]" (genuino) {mqtt= }
-String Genuino_weight "Weight [%s]"
-String Arduino_temperature "Temperature [%s]"
-String Arduino_light "Light [%s]"
+// file gateway.items
+String Genuino "Genuino [%s]" (genuino) {mqtt="<[mosquitto:/home/rfm_gw/nb/node10/dev1:state:default]"}
+String Genuino_knock "Knock [%s]" // knock sensor KY 031
+String Genuino_temperature "Temperature [%s]" // temperature KY 001
+String Genuino_lightbar "Light barrier [%s]" // light barrier KY 010
+String Genuino_button "Button [%s]" // button KY 004
 
 // file default.sitemap
-sitemap default label="Serial"
-{
+sitemap default label="Home Automation Group 5"{
 	Frame label="Arduino"{
 		Text item=Arduino 
 		Text item=Arduino_weight 
 		Text item=Arduino_temperature
 		Text item=Arduino_light
 	}
+	Frame label="Genuino"{
+		Text item=Genuino 
+		Text item=Genuino_knock
+		Text item=Genuino_temperature
+		Text item=Genuino_lightbar
+		Text item=Genuino_button
+	}
 }
 
-// file serial.rules
-rule "Arduino"
+// file gateway.rules
+rule "Genuino"
 	when
-		Item Arduino received update
+		Item Genuino received update
 	then
 		var String ArduinoUpdate = Arduino.state.toString.trim
 		
@@ -42,12 +49,6 @@ rule "Arduino"
 		
 		Arduino_light.postUpdate(light)
 end
-
-
-
-// changes in these files: /etc/init.d/openhab and /usr/share/openhab/bin/openhab.sh
-// write into
--Dgnu.io.rxtx.SerialPorts=/dev/ttyACM0
 
 // log datei
 /var/log/openhab/events.log
