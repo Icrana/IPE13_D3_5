@@ -1,0 +1,55 @@
+// Code for Pi
+
+// file gateway.items
+String Genuino "Genuino [%s]" (genuino) {mqtt="<[mosquitto:/home/rfm_gw/nb/node10/dev1:state:default]"}
+String Genuino_knock "Knock [%s]" // knock sensor KY 031
+String Genuino_temperature "Temperature [%s]" // temperature KY 001
+String Genuino_lightbar "Light barrier [%s]" // light barrier KY 010
+String Genuino_button "Button [%s]" // button KY 004
+
+// file default.sitemap
+sitemap default label="Home Automation Group 5"{
+	Frame label="Arduino"{
+		Text item=Arduino 
+		Text item=Arduino_weight 
+		Text item=Arduino_temperature
+		Text item=Arduino_light
+	}
+	Frame label="Genuino"{
+		Text item=Genuino 
+		Text item=Genuino_knock
+		Text item=Genuino_temperature
+		Text item=Genuino_lightbar
+		Text item=Genuino_button
+	}
+}
+
+// file gateway.rules
+rule "Genuino"
+	when
+		Item Genuino received update
+	then
+		var String ArduinoUpdate = Arduino.state.toString.trim
+		
+		// weight
+		var int weightStartsOn = ArduinoUpdate.indexOf("weight:") + "weight:".length
+		var String weight = ArduinoUpdate.mid(weightStartsOn, ArduinoUpdate.indexOf('_')-weightStartsOn)
+		
+		Arduino_weight.postUpdate(weight)	
+		
+		// temperature
+		var int temperatureStartsOn = ArduinoUpdate.indexOf("temperature:") + "temperature:".length
+		var String temperature = ArduinoUpdate.mid(temperatureStartsOn, ArduinoUpdate.indexOf('_')-temperatureStartsOn)
+		
+		Arduino_temperature.postUpdate(temperature)
+		
+		// light
+		var int lightStartsOn = ArduinoUpdate.indexOf("light:") + "light:".length
+		var String light = ArduinoUpdate.mid(lightStartsOn, ArduinoUpdate.indexOf(';')-lightStartsOn)
+		
+		Arduino_light.postUpdate(light)
+end
+
+// log datei
+/var/log/openhab/events.log
+
