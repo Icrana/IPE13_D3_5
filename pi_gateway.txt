@@ -6,6 +6,7 @@ String Genuino_knock "Knock [%s]" // knock sensor KY 031
 String Genuino_temperature "Temperature [%s]" // temperature KY 001
 String Genuino_lightbar "Light barrier [%s]" // light barrier KY 010
 String Genuino_button "Button [%s]" // button KY 004
+String alarmByLightBar "Alarm [%s]"
 
 // file default.sitemap
 sitemap default label="Home Automation Group 5"{
@@ -21,34 +22,30 @@ sitemap default label="Home Automation Group 5"{
 		Text item=Genuino_temperature
 		Text item=Genuino_lightbar
 		Text item=Genuino_button
+		Text item=alarmByLightBar
 	}
 }
 
 // file gateway.rules
-rule "Genuino"
-	when
-		Item Genuino received update
-	then
-		var String ArduinoUpdate = Arduino.state.toString.trim
-		
-		// weight
-		var int weightStartsOn = ArduinoUpdate.indexOf("weight:") + "weight:".length
-		var String weight = ArduinoUpdate.mid(weightStartsOn, ArduinoUpdate.indexOf('_')-weightStartsOn)
-		
-		Arduino_weight.postUpdate(weight)	
-		
-		// temperature
-		var int temperatureStartsOn = ArduinoUpdate.indexOf("temperature:") + "temperature:".length
-		var String temperature = ArduinoUpdate.mid(temperatureStartsOn, ArduinoUpdate.indexOf('_')-temperatureStartsOn)
-		
-		Arduino_temperature.postUpdate(temperature)
-		
-		// light
-		var int lightStartsOn = ArduinoUpdate.indexOf("light:") + "light:".length
-		var String light = ArduinoUpdate.mid(lightStartsOn, ArduinoUpdate.indexOf(';')-lightStartsOn)
-		
-		Arduino_light.postUpdate(light)
+rule "alarmByLightBar_rule"
+	when 
+		Item Genuino_lightbar from OFF to 0N
+	then	
+		alarmByLightBar.postUpdate("ACTIVATED")
+		sendMail("mail@carinamerz.de", "ALARM by Lightbar", "The lightbar alarm has been activated!!!")
 end
+
+rule "endAlarm"
+	when 
+		Item Genuino_button from ON to OFF
+	then
+		if (alarmByLightBar == ON){
+			alarmByLightBar.postUpdate("deactivated"
+			sendMail("mail@carinamerz", "Alarmoff", "The lightbar alarm has been deactivated.")
+		} 
+		else {
+		}
+end			
 
 // log datei
 /var/log/openhab/events.log

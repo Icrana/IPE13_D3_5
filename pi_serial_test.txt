@@ -61,8 +61,6 @@ rule "SendLightToThingSpeak"
 end
 
 
-
-
 // changes in these files: /etc/init.d/openhab and /usr/share/openhab/bin/openhab.sh
 // write into
 -Dgnu.io.rxtx.SerialPorts=/dev/ttyACM0
