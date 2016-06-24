@@ -1,0 +1,6 @@
+Number Genuino "Genuino [%.1f pc]" <moon> (genuino) {mqtt="<[mosquitto:home/rfm_gw/nb/node10/dev42/data:state:default]"}
+Number Genuino_knock "Knock [%.1f]" <motion> {mqtt="<[mosquitto:home/rfm_gw/nb/node10/dev01/data:state:default]"} // knock sensor KY 031
+Number Genuino_temperature "Temperature [%.1f °C]" <temperature> {mqtt="<[mosquitto:home/rfm_gw/nb/node10/dev04/data:state:default]"} // temperature KY 001
+Number Genuino_lightbar "Light barrier [%.1f]" <flow> {mqtt="<[mosquitto:home/rfm_gw/nb/node10/dev02/data:state:default]"} // light barrier KY 010
+Number Genuino_button "Button [%.1f]" {mqtt="<[mosquitto:home/rfm_gw/nb/node10/dev03/data:state:default]"}  // button KY 004
+String alarmByLightbar "Alarm [%s]" <alarm>

@@ -1,0 +1,4 @@
+Switch plugA "Plug A" {exec=">[OFF:/usr/local/bin/pilight-send -p brennenstuhl -s 31 -u 1 --off] >[ON:/usr/local/bin/pilight-send -p brennenstuhl -s 31 -u 1 --on]"}
+Switch plugB "Plug B" {exec=">[OFF:/usr/local/bin/pilight-send -p brennenstuhl -s 31 -u 2 --off] >[ON:/usr/local/bin/pilight-send -p brennenstuhl -s 31 -u 2 --on]"}
+Switch plugC "Plug C" {exec=">[OFF:/usr/local/bin/pilight-send -p brennenstuhl -s 31 -u 4 --off] >[ON:/usr/local/bin/pilight-send -p brennenstuhl -s 31 -u 4 --on]"}
+

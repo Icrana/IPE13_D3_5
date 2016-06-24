@@ -1,0 +1,4 @@
+String Arduino "Arduino [%s]" <settings> (arduino) {serial="/dev/ttyACM0"}
+String Arduino_weight "Weight [%s g]" <pie>
+String Arduino_temperature "Temperature [%s °C]" <temperature>
+String Arduino_light "Light [%s]" <moon>

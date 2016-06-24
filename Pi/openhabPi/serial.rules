@@ -1,0 +1,47 @@
+rule "Arduino"
+	when
+		Item Arduino received update
+	then
+		var String ArduinoUpdate = Arduino.state.toString.trim
+		
+		var int weightStartsOn = ArduinoUpdate.indexOf("weight:") + "weight:".length
+		var String weight = ArduinoUpdate.mid(weightStartsOn, ArduinoUpdate.indexOf('g_')-weightStartsOn)
+		
+		Arduino_weight.postUpdate(weight)	
+		
+		var int temperatureStartsOn = ArduinoUpdate.indexOf("temperature:") + "temperature:".length
+		var String temperature = ArduinoUpdate.mid(temperatureStartsOn, ArduinoUpdate.indexOf('C_')-temperatureStartsOn)
+		
+		Arduino_temperature.postUpdate(temperature)
+		
+		var int lightStartsOn = ArduinoUpdate.indexOf("light:") + "light:".length
+		var String light = ArduinoUpdate.mid(lightStartsOn, ArduinoUpdate.indexOf(';')-lightStartsOn)
+		
+		Arduino_light.postUpdate(light)
+end
+
+rule "SendLightToThingSpeak"
+	when
+		Item Arduino_light received update or
+		Item Genuino_temperature received update
+	then 
+		sendHttpGetRequest("http://api.thingspeak.com/update?api_key=PAEA6JS2MXUR0U8D&field1=" + Arduino_light.state + "&field2=" + Genuino_temperature.state.toString())
+end
+
+rule "alarmByLight_rule"
+	when	
+		Item Genuino_lightbar changed from 0.0 to 1.0
+	then	
+		alarmByLightbar.postUpdate("ACTIVATED")
+end
+
+rule "endAlarm"
+	when 	
+		Item Genuino_button changed from 1.0 to 0.0
+	then 
+		if (alarmByLightbar.state == "ACTIVATED"){
+			alarmByLightbar.postUpdate("deactivated")
+		}
+		else {
+		}
+end	

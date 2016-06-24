@@ -1,15 +1,20 @@
-/* 
-  Transmit sketch - RF Calibration
-     Written by ScottC 17 July 2014
-     Arduino IDE version 1.0.5
-     Website: http://arduinobasics.blogspot.com
-     Transmitter: FS1000A/XY-FST
-     Description: A simple sketch used to calibrate RF transmission.          
- ------------------------------------------------------------- */
-
+//Only combined Version of Serial, Line-Sensor, RF-Modul-to-Plug and total Transmission both direction
+//Hali Hallo Elisabeth
+//Defines for RF Module for plug
  #define rfTransmitPin 2  //RF Transmitter pin = digital pin 4
  #define ledPin 13        //Onboard LED = digital pin 13
- 
+
+
+
+//Define Variables regarding to line-sensor and transmission to raspberry
+int weight = 125;
+int temperature = 39;
+int QRE1113_Pin = 0; //connected to analog 0
+
+//Define Variables regarding connection from raspberry to arduino
+int number = 0;
+
+//Define Variables regarding RF transmission for the plugs
  const int codeSize = 25;      //The size of the code to transmit
  int codeToTransmit[codeSize]; //The array used to hold the RF code
  int lightON[]={2,2,2,2,2,2,2,2,2,2,2,2,2,4,2,4,2,4,2,4,2,4,2,2,3}; //The RF code that will turn the light ON
@@ -17,34 +22,70 @@
  int codeToggler = 1;  //Used to switch between turning the light ON and OFF
  int timeDelay=105;      // The variable used to calibrate the RF signal lengths.
 
- 
- 
- void setup(){
-   Serial.begin(9600);        // Turn the Serial Protocol ON
-   pinMode(rfTransmitPin, OUTPUT);   //Transmit pin is an output  
-   pinMode(ledPin, OUTPUT);          
+
+
+void setup(){
+  //Start Serial Transmission 9600 Baud
+  Serial.begin(9600);
   
- //LED initialisation sequence - gives us some time to get ready
-  digitalWrite(ledPin, HIGH); 
-  delay(3000);
-  digitalWrite(ledPin, LOW); 
-  delay(1000);
- }
- 
- 
- 
-  void loop(){
+  //LED PIN for USB Connection
+   pinMode(13, OUTPUT);
+
+  //Setup Transmission Raspberry ---> Arduino
+   pinMode(rfTransmitPin, OUTPUT);   //Transmit pin is an output  
+   pinMode(ledPin, OUTPUT);
+}
+
+
+
+void loop(){
+  //Working for incoming Bytes ---> Raspberry to Arduino
+  int incomingBytes;
+   if (Serial.available() > 0)
+   {
+       //Serial.print("character recieved: ");
+       //Serial.println(number, DEC);
+       incomingBytes = Serial.read();
+       
+       if(incomingBytes == '1'){
+          Serial.print("sending...");
+          digitalWrite(13, HIGH);
+          delay(1000);
+          }
+   
+      else{
+          digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
+          }
+   }
+
+
+  //RF Modul for Plug Controlling
     toggleCode();    // switch between light ON and light OFF
     transmitCode();  // transmit the code to RF receiver on the Fan/Light
     
     //timeDelay+=10;    //Increment the timeDelay by 10 microseconds with every transmission
-    delay(2000);      //Each transmission will be about 2 seconds apart.
-  }
+    //delay(2000);      //Each transmission will be about 2 seconds apart.
+
   
+  //Loop Information for Line-Sensor and Transmission to Raspberry
+  Serial.print("weight:");
+  Serial.print(weight);
+  Serial.print("g_temperature:");
+  Serial.print(temperature);
+  Serial.print("C_light:");
+  int QRE_Value = analogRead(QRE1113_Pin);
+  Serial.print(QRE_Value); 
+  Serial.print(";");
   
-  
-  
-  /*---------------------------------------------------------------- 
+  delay(5000); //Total delay up to 6000ms
+}
+
+
+
+
+
+//Code for RF Module --> Arduino -> Plug
+ /*---------------------------------------------------------------- 
      toggleCode(): This is used to toggle the code for turning 
                    the light ON and OFF 
   -----------------------------------------------------------------*/
@@ -126,5 +167,6 @@
     //Turn the LED off after the code has been transmitted.
     digitalWrite(ledPin, LOW); 
  }
+
 
 

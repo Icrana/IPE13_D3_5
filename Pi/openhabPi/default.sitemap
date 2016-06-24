@@ -1,0 +1,17 @@
+sitemap default label="Home Automation Group 5"{
+	Frame label="Arduino"{ 
+		Text item=Arduino_light
+	}
+	Frame label="Genuino"{ 
+		Text item=Genuino_knock
+		Text item=Genuino_temperature
+		Text item=Genuino_lightbar
+		Text item=Genuino_button
+		Text item=alarmByLightbar
+	}
+	Frame label="Plugs"{
+		Switch item=plugA
+		Switch item=plugB
+		Switch item=plugC
+	}
+}
