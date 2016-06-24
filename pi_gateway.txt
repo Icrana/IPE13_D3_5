@@ -22,7 +22,7 @@ sitemap default label="Home Automation Group 5"{
 		Text item=Genuino_temperature
 		Text item=Genuino_lightbar
 		Text item=Genuino_button
-		Text item=alarmByLightBar
+		Text item=alarmByLightbar
 	}
 }
 
@@ -32,7 +32,6 @@ rule "alarmByLightBar_rule"
 		Item Genuino_lightbar from OFF to 0N
 	then	
 		alarmByLightBar.postUpdate("ACTIVATED")
-		sendMail("mail@carinamerz.de", "ALARM by Lightbar", "The lightbar alarm has been activated!!!")
 end
 
 rule "endAlarm"
@@ -41,7 +40,6 @@ rule "endAlarm"
 	then
 		if (alarmByLightBar == ON){
 			alarmByLightBar.postUpdate("deactivated"
-			sendMail("mail@carinamerz", "Alarmoff", "The lightbar alarm has been deactivated.")
 		} 
 		else {
 		}
